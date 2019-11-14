@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: st-microservice-filemanager
+
+server:
+  port: 8886
+  
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+
+endpoint: filemanager

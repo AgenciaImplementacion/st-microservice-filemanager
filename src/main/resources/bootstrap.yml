@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: st-microservice-filemanager
+  profiles:
+    active: 
+      - "develop"
+      
+---
+spring:
+  profiles: develop
+  cloud:
+    config:
+      failFast: false
+      uri: http://localhost:8806
+      
+---
+spring:
+  profiles: production
+  cloud:
+    config:
+      failFast: true
+      uri: http://localhost:8806
