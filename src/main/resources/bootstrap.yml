@@ -11,7 +11,7 @@ spring:
   cloud:
     config:
       failFast: false
-      uri: http://localhost:8806
+      uri: http://localhost:8889
       
 ---
 spring:

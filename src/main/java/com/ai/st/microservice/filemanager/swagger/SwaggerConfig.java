@@ -1,4 +1,4 @@
-package com.ai.st.microservice.tasks.swagger;
+package com.ai.st.microservice.filemanager.swagger;
 
 import com.google.common.base.Predicate;
 

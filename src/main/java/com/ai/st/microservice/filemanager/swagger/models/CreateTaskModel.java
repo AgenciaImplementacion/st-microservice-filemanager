@@ -1,4 +1,4 @@
-package com.ai.st.microservice.tasks.swagger.models;
+package com.ai.st.microservice.filemanager.swagger.models;
 
 import java.io.Serializable;
 
