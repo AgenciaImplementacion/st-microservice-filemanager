@@ -65,6 +65,16 @@ public class StorageClient {
             throw new DriverNotFoundException("Error: driver " + driver + " not found.");
         }
     }
+    
+    public boolean store(byte[] file, String filename, String name, String path, String driver, boolean rewrite) throws IOException, DriverNotFoundException {
+        if (this.drivers.containsKey(driver)) {
+            Driver d = this.drivers.get(driver);
+            return d.store(file, filename, name, path, rewrite);
+        } else {
+            LOGGER.log(Level.SEVERE, "Error: (StorageClient.store.DriverNotFound) " + driver);
+            throw new DriverNotFoundException("Error: driver " + driver + " not found.");
+        }
+    }
 
     public FolderInfo list(String path, String driver) throws DriverNotFoundException, IOException {
         return this.list(path, driver, -1);

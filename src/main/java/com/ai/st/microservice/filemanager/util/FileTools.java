@@ -46,6 +46,11 @@ public class FileTools {
 
     public static void saveFile(MultipartFile file, String name, String path, boolean rewrite) throws IOException {
         String fileName = file.getOriginalFilename();
+        saveFile(file.getBytes(), fileName, name, path, rewrite);
+    }
+    
+    public static void saveFile(byte[] file, String originalFilename, String name, String path, boolean rewrite) throws IOException {
+        String fileName = originalFilename;
         new File(path).mkdirs();
         File f = new File(path + File.separatorChar + name + ".zip");
         if (f.exists() && rewrite) {
@@ -55,9 +60,9 @@ public class FileTools {
             throw new FileAlreadyExistsException("Error: " + name + " al ready exist");
         }
         ZipOutputStream o = new ZipOutputStream(new FileOutputStream(f));
-        ZipEntry e = new ZipEntry(file.getOriginalFilename());
+        ZipEntry e = new ZipEntry(fileName);
         o.putNextEntry(e);
-        byte[] data = file.getBytes();
+        byte[] data = file;
         o.write(data, 0, data.length);
         o.closeEntry();
         o.close();

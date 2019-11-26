@@ -4,6 +4,7 @@ spring:
 
 server:
   port: 8886
+  max-http-header-size: 10000000 
   
 logging:
   level:

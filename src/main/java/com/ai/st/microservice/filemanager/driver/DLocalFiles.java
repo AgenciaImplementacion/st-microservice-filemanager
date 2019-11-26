@@ -41,6 +41,14 @@ public class DLocalFiles implements Driver {
         }
         return false;
     }
+    
+    public boolean store(byte[] file, String filename, String name, String path, boolean rewrite) throws IOException {
+        if (file.length>0) {
+            FileTools.saveFile(file, filename, name, this.fullBasePath + File.separatorChar + path, rewrite);
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public FolderInfo list(String path, int depth) throws IOException {

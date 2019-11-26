@@ -61,7 +61,7 @@ public class WSFileController {
         return new ResponseEntity<>(r, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/file", method = RequestMethod.POST)
+    @RequestMapping(value = "/file", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MessageResponse> upload(
             @RequestParam("file") MultipartFile file,
             @RequestParam("driver") String driver,
@@ -83,6 +83,46 @@ public class WSFileController {
             while (true) {
                 try {
                     st.store(file, h + "h" + mi + "m" + s, base_url, driver, false);
+                    break;
+                } catch (FileAlreadyExistsException e) {
+                    s = (new RandomString(5)).nextString();
+                }
+            }
+            r.setUrl("/v1/file/" + driver + "?id=" + base_url.replaceAll(String.valueOf(File.separatorChar), ".") + "." + h + "h" + mi + "m" + s);
+            r.setOk("Success");
+        } catch (IOException e) {
+            r.setError(e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error: (DLocalFiles.store.IOException) " + e.getMessage(), e);
+        } catch (DriverNotFoundException e) {
+            r.setError(e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error: (DLocalFiles.store.DriverNotFoundException) " + e.getMessage(), e);
+        }
+        return new ResponseEntity<>(r, HttpStatus.OK);
+    }
+    
+    @RequestMapping(value = "/filebytes", method = RequestMethod.POST)
+    public ResponseEntity<MessageResponse> uploadFeign(
+            @RequestParam("file") byte[] file,
+            @RequestParam("driver") String driver,
+            @RequestParam("filename") String filename,
+            @RequestParam("namespace") Optional<String> opNamespace) {
+        MessageResponse r = new MessageResponse();
+        StorageClient st = StorageClient.getInstance();
+        String namespace = "default";
+        if (opNamespace.isPresent()) {
+            namespace = opNamespace.get();
+        }
+        try {
+            int y = Calendar.getInstance().get(Calendar.YEAR);
+            int m = Calendar.getInstance().get(Calendar.MONTH);
+            int d = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+            int h = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+            int mi = Calendar.getInstance().get(Calendar.MINUTE);
+            String s = (new RandomString(5)).nextString();
+            String base_url = namespace + File.separatorChar + String.valueOf(y) + File.separatorChar + String.valueOf(m) + File.separatorChar + String.valueOf(d);
+            while (true) {
+                try {
+                    st.store(file, filename, h + "h" + mi + "m" + s, base_url, driver, false);
                     break;
                 } catch (FileAlreadyExistsException e) {
                     s = (new RandomString(5)).nextString();

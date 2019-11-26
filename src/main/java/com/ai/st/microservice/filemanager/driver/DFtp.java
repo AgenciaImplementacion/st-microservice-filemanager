@@ -28,6 +28,11 @@ public class DFtp implements Driver {
     public boolean store(MultipartFile file, String name, String path, boolean rewrite) {
         return false;
     }
+    
+    @Override
+    public boolean store(byte[] file, String filename, String name, String path, boolean rewrite) {
+        return false;
+    }
 
     @Override
     public FolderInfo list(String path, int depth) throws IOException {
