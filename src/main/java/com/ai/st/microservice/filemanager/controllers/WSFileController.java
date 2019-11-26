@@ -119,7 +119,12 @@ public class WSFileController {
             int h = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
             int mi = Calendar.getInstance().get(Calendar.MINUTE);
             String s = (new RandomString(5)).nextString();
-            String base_url = namespace + File.separatorChar + String.valueOf(y) + File.separatorChar + String.valueOf(m) + File.separatorChar + String.valueOf(d);
+            String base_url;
+            if(namespace.equals("default")) {
+            	base_url = namespace + File.separatorChar + String.valueOf(y) + File.separatorChar + String.valueOf(m) + File.separatorChar + String.valueOf(d);
+            }else {
+            	base_url = namespace;
+            }
             while (true) {
                 try {
                     st.store(file, filename, h + "h" + mi + "m" + s, base_url, driver, false);
