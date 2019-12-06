@@ -3,7 +3,10 @@ spring:
     name: st-microservice-filemanager
   profiles:
     active: 
-      - "develop"
+      - "production"
+  cloud:
+    config:
+      enabled: true
       
 ---
 spring:
@@ -19,4 +22,4 @@ spring:
   cloud:
     config:
       failFast: true
-      uri: http://localhost:8806
+      uri: http://st-config-server:8890
