@@ -21,7 +21,7 @@ public class RabbitMQFileListener {
 
 	private final static Logger log = Logger.getLogger(DLocalFiles.class.getName());
 
-	@RabbitListener(queues = "${st.rabbitmq.queue}")
+	@RabbitListener(queues = "${st.rabbitmq.queueFiles.queue}")
 	public String recievedMessageFile(UploadFileMessageDto message) {
 
 		String url = null;

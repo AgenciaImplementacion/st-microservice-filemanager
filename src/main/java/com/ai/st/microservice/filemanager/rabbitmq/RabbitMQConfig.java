@@ -15,28 +15,28 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-	@Value("${st.rabbitmq.queue}")
-	public String queueName;
+	@Value("${st.rabbitmq.queueFiles.queue}")
+	public String queueFilesName;
 
-	@Value("${st.rabbitmq.exchange}")
-	public String exchange;
+	@Value("${st.rabbitmq.queueFiles.exchange}")
+	public String exchangeFilesName;
 
-	@Value("${st.rabbitmq.routingkey}")
-	private String routingkey;
+	@Value("${st.rabbitmq.queueFiles.routingkey}")
+	public String routingkeyFilesName;
 
 	@Bean
 	public Queue queue() {
-		return new Queue(queueName, false);
+		return new Queue(queueFilesName, false);
 	}
 
 	@Bean
 	public DirectExchange exchange() {
-		return new DirectExchange(exchange);
+		return new DirectExchange(exchangeFilesName);
 	}
 
 	@Bean
 	public Binding binding(Queue queue, DirectExchange exchange) {
-		return BindingBuilder.bind(queue).to(exchange).with(routingkey);
+		return BindingBuilder.bind(queue).to(exchange).with(routingkeyFilesName);
 	}
 
 	@Bean
