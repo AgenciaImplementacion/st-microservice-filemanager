@@ -57,14 +57,15 @@ public class RabbitMQFileListener {
 			while (true) {
 				try {
 					st.store(file, filename, h + "h" + mi + "m" + s, base_url, false);
+					File tmpfile = new File(this.tmpPath + File.separatorChar + filename);
+					tmpfile.delete();
 					break;
 				} catch (FileAlreadyExistsException e) {
 					s = (new RandomString(5)).nextString();
 				}
 			}
 
-			url = base_url.replaceAll(String.valueOf(File.separatorChar), ".") + "." + h
-					+ "h" + mi + "m" + s;
+			url = this.realPath + base_url + File.separatorChar + (h + "h" + mi + "m" + s) + ".zip";
 
 		} catch (IOException e) {
 			log.log(Level.SEVERE, "Error: (DLocalFiles.store.IOException) " + e.getMessage(), e);
