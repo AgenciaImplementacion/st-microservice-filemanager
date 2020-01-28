@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.zip.*;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 public class FileTools {
@@ -92,6 +93,14 @@ public class FileTools {
         if (f.isFile())
             return true;
         return false;
+    }
+    
+    public static byte[] getByteArrayFile(String path) {
+    	try {
+			return IOUtils.toByteArray(new FileInputStream(new File(path)));
+		} catch (IOException e) {
+			return null;
+		}
     }
 
 }

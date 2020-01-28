@@ -8,30 +8,34 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.ai.st.microservice.filemanager.driver.DLocalFiles;
-import com.ai.st.microservice.filemanager.driver.DriverNotFoundException;
 import com.ai.st.microservice.filemanager.dto.rabbitmq.UploadFileMessageDto;
-import com.ai.st.microservice.filemanager.storage.StorageClient;
+import com.ai.st.microservice.filemanager.util.FileTools;
 import com.ai.st.microservice.filemanager.util.RandomString;
 
 @Component
 public class RabbitMQFileListener {
 
 	private final static Logger log = Logger.getLogger(DLocalFiles.class.getName());
+	
+	@Value("${st.temporalDirectory}")
+	public String tmpPath;
+	
+	@Value("${st.filesDirectory}")
+	public String realPath;
 
 	@RabbitListener(queues = "${st.rabbitmq.queueFiles.queue}")
 	public String recievedMessageFile(UploadFileMessageDto message) {
 
 		String url = null;
 
-		StorageClient st = StorageClient.getInstance();
+		DLocalFiles st = new DLocalFiles(this.realPath);
 
 		String namespace = message.getNamespace();
-		byte[] file = message.getFile();
 		String filename = message.getFilename();
-		String driver = message.getDriver();
 
 		try {
 			int y = Calendar.getInstance().get(Calendar.YEAR);
@@ -47,22 +51,23 @@ public class RabbitMQFileListener {
 			} else {
 				base_url = namespace;
 			}
+			
+			byte[] file = FileTools.getByteArrayFile(this.tmpPath + File.separatorChar + filename);
+					
 			while (true) {
 				try {
-					st.store(file, filename, h + "h" + mi + "m" + s, base_url, driver, false);
+					st.store(file, filename, h + "h" + mi + "m" + s, base_url, false);
 					break;
 				} catch (FileAlreadyExistsException e) {
 					s = (new RandomString(5)).nextString();
 				}
 			}
 
-			url = "/v1/file/" + driver + "?id=" + base_url.replaceAll(String.valueOf(File.separatorChar), ".") + "." + h
+			url = base_url.replaceAll(String.valueOf(File.separatorChar), ".") + "." + h
 					+ "h" + mi + "m" + s;
 
 		} catch (IOException e) {
 			log.log(Level.SEVERE, "Error: (DLocalFiles.store.IOException) " + e.getMessage(), e);
-		} catch (DriverNotFoundException e) {
-			log.log(Level.SEVERE, "Error: (DLocalFiles.store.DriverNotFoundException) " + e.getMessage(), e);
 		}
 
 		return url;
