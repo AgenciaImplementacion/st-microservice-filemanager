@@ -20,14 +20,14 @@ import com.ai.st.microservice.filemanager.util.RandomString;
 public class RabbitMQFileListener {
 
 	private final static Logger log = Logger.getLogger(DLocalFiles.class.getName());
-	
+
 	@Value("${st.temporalDirectory}")
 	public String tmpPath;
-	
+
 	@Value("${st.filesDirectory}")
 	public String realPath;
 
-	@RabbitListener(queues = "${st.rabbitmq.queueFiles.queue}")
+	@RabbitListener(queues = "${st.rabbitmq.queueFiles.queue}", concurrency = "${st.rabbitmq.queueFiles.concurrency}")
 	public String recievedMessageFile(UploadFileMessageDto message) {
 
 		String url = null;
@@ -51,9 +51,9 @@ public class RabbitMQFileListener {
 			} else {
 				base_url = namespace;
 			}
-			
+
 			byte[] file = FileTools.getByteArrayFile(this.tmpPath + File.separatorChar + filename);
-					
+
 			while (true) {
 				try {
 					st.store(file, filename, h + "h" + mi + "m" + s, base_url, false);
