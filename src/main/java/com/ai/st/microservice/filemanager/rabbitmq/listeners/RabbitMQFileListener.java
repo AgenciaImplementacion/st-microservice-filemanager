@@ -1,7 +1,6 @@
 package com.ai.st.microservice.filemanager.rabbitmq.listeners;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.Calendar;
 import java.util.logging.Level;
@@ -53,21 +52,25 @@ public class RabbitMQFileListener {
 			}
 
 			byte[] file = FileTools.getByteArrayFile(this.tmpPath + File.separatorChar + filename);
+			if (file != null) {
 
-			while (true) {
 				try {
-					st.store(file, filename, h + "h" + mi + "m" + s, base_url, false);
+					st.store(file, filename, h + "h" + mi + "m" + s, base_url, false, message.isZip());
 					File tmpfile = new File(this.tmpPath + File.separatorChar + filename);
 					tmpfile.delete();
-					break;
 				} catch (FileAlreadyExistsException e) {
 					s = (new RandomString(5)).nextString();
 				}
+
+				if (message.isZip()) {
+					url = this.realPath + base_url + File.separatorChar + (h + "h" + mi + "m" + s) + ".zip";
+				} else {
+					url = this.realPath + base_url + File.separatorChar + filename;
+				}
+
 			}
 
-			url = this.realPath + base_url + File.separatorChar + (h + "h" + mi + "m" + s) + ".zip";
-
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.log(Level.SEVERE, "Error: (DLocalFiles.store.IOException) " + e.getMessage(), e);
 		}
 
