@@ -62,13 +62,13 @@ $ docker network create st
 ### Create image from Dockerfile
 
 ```sh
-$ docker build -t st-microservice-filemanager:ursus .
+$ docker build -t st-microservice-filemanager:lynx .
 ```
 
 ### Run Container
 
 ```sh
-$ docker run -P -t --network st -d -v /opt/file-manager/files:/opt/file-manager/files  st-microservice-filemanager:ursus
+$ docker run -P -t --network st -d -v /opt/file-manager/files:/opt/file-manager/files  st-microservice-filemanager:lynx
 ```
 
 ## License

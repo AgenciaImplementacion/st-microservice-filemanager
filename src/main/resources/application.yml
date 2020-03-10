@@ -1,6 +1,8 @@
 spring:
   application:
     name: st-microservice-filemanager
+  main:
+    allow-bean-definition-overriding: true
 
 server:
   port: 8886
@@ -20,3 +22,7 @@ logging:
         SQL: debug
 
 endpoint: filemanager
+
+filepaths:
+  files: /Users/felipe/Documents
+  tmp: /Users/felipe/Documents/tmp
