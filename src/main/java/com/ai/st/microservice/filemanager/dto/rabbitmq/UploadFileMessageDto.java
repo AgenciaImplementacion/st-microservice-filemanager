@@ -11,17 +11,19 @@ public class UploadFileMessageDto implements Serializable {
 	private String driver;
 	private byte[] file;
 	private String filenameZip;
+	private boolean zip;
 	
 	public UploadFileMessageDto() {
-
+		this.zip = true;
 	}
 
-	public UploadFileMessageDto(String filename, String namespace, String driver, byte[] file, String filenameZip) {
+	public UploadFileMessageDto(String filename, String namespace, String driver, byte[] file, String filenameZip, boolean zip) {
 		this.filename = filename;
 		this.namespace = namespace;
 		this.driver = driver;
 		this.file = file;
 		this.filenameZip = filenameZip;
+        this.zip = zip;
 	}
 
 	public String getFilename() {
@@ -62,6 +64,14 @@ public class UploadFileMessageDto implements Serializable {
 
 	public void setFilenameZip(String filenameZip) {
 		this.filenameZip = filenameZip;
+	}
+	
+	public boolean isZip() {
+		return zip;
+	}
+
+	public void setZip(boolean zip) {
+		this.zip = zip;
 	}
 
 }

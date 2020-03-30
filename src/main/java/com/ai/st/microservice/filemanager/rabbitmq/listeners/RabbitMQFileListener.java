@@ -1,7 +1,6 @@
 package com.ai.st.microservice.filemanager.rabbitmq.listeners;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.Calendar;
 import java.util.logging.Level;
@@ -20,14 +19,14 @@ import com.ai.st.microservice.filemanager.util.RandomString;
 public class RabbitMQFileListener {
 
 	private final static Logger log = Logger.getLogger(DLocalFiles.class.getName());
-	
+
 	@Value("${st.temporalDirectory}")
 	public String tmpPath;
-	
+
 	@Value("${st.filesDirectory}")
 	public String realPath;
 
-	@RabbitListener(queues = "${st.rabbitmq.queueFiles.queue}")
+	@RabbitListener(queues = "${st.rabbitmq.queueFiles.queue}", concurrency = "${st.rabbitmq.queueFiles.concurrency}")
 	public String recievedMessageFile(UploadFileMessageDto message) {
 
 		String url = null;
@@ -51,23 +50,31 @@ public class RabbitMQFileListener {
 			} else {
 				base_url = namespace;
 			}
-			
+
 			byte[] file = FileTools.getByteArrayFile(this.tmpPath + File.separatorChar + filename);
-					
-			while (true) {
+			if (file != null) {
+
 				try {
-					st.store(file, filename, h + "h" + mi + "m" + s, base_url, false);
+					st.store(file, filename,
+							message.getFilenameZip() != null && !message.getFilenameZip().isEmpty()
+									? message.getFilenameZip()
+									: h + "h" + mi + "m" + s,
+							base_url, false, message.isZip());
 					File tmpfile = new File(this.tmpPath + File.separatorChar + filename);
 					tmpfile.delete();
-					break;
 				} catch (FileAlreadyExistsException e) {
 					s = (new RandomString(5)).nextString();
 				}
+
+				if (message.isZip()) {
+					url = this.realPath + base_url + File.separatorChar + (h + "h" + mi + "m" + s) + ".zip";
+				} else {
+					url = this.realPath + base_url + File.separatorChar + filename;
+				}
+
 			}
 
-			url = this.realPath + base_url + File.separatorChar + (h + "h" + mi + "m" + s) + ".zip";
-
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.log(Level.SEVERE, "Error: (DLocalFiles.store.IOException) " + e.getMessage(), e);
 		}
 
