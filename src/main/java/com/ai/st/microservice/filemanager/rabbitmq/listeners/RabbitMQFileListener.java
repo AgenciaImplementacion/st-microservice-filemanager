@@ -27,9 +27,7 @@ public class RabbitMQFileListener {
 	public String realPath;
 
 	@RabbitListener(queues = "${st.rabbitmq.queueFiles.queue}", concurrency = "${st.rabbitmq.queueFiles.concurrency}")
-	public String recievedMessageFile(UploadFileMessageDto message) {
-
-		String url = null;
+	public void recievedMessageFile(UploadFileMessageDto message) {
 
 		DLocalFiles st = new DLocalFiles(this.realPath);
 
@@ -66,19 +64,12 @@ public class RabbitMQFileListener {
 					s = (new RandomString(5)).nextString();
 				}
 
-				if (message.isZip()) {
-					url = this.realPath + base_url + File.separatorChar + (h + "h" + mi + "m" + s) + ".zip";
-				} else {
-					url = this.realPath + base_url + File.separatorChar + filename;
-				}
-
 			}
 
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "Error: (DLocalFiles.store.IOException) " + e.getMessage(), e);
 		}
 
-		return url;
 	}
 
 }
