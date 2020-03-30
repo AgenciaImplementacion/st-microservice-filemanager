@@ -55,7 +55,11 @@ public class RabbitMQFileListener {
 			if (file != null) {
 
 				try {
-					st.store(file, filename, h + "h" + mi + "m" + s, base_url, false, message.isZip());
+					st.store(file, filename,
+							message.getFilenameZip() != null && !message.getFilenameZip().isEmpty()
+									? message.getFilenameZip()
+									: h + "h" + mi + "m" + s,
+							base_url, false, message.isZip());
 					File tmpfile = new File(this.tmpPath + File.separatorChar + filename);
 					tmpfile.delete();
 				} catch (FileAlreadyExistsException e) {
